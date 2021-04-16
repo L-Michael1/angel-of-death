@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="Topo Maps">
+  <rte>
+    <name>Beginning</name>
+    <rtept lat="1.000000" lon="1.000000"/>
+  </rte>
+  <trk>
+    <name>Memorial Forest Loop</name>
+    <trkseg>
+      <trkpt lat="43.535810" lon="-80.220290">
+        <ele>317.0</ele>
+      </trkpt>
+      <trkpt lat="43.536060" lon="-80.220311">
+        <ele>333.0</ele>
+      </trkpt>
+      <trkpt lat="43.536165" lon="-80.220411">
+        <ele>331.1</ele>
+      </trkpt>
+      <trkpt lat="43.536126" lon="-80.220605">
+        <ele>328.8</ele>
+      </trkpt>
+      <trkpt lat="43.536231" lon="-80.221147">
+        <ele>322.6</ele>
+      </trkpt>
+      <trkpt lat="43.536339" lon="-80.221270">
+        <ele>320.5</ele>
+      </trkpt>
+      <trkpt lat="43.536468" lon="-80.221092">
+        <ele>322.5</ele>
+      </trkpt>
+      <trkpt lat="43.536829" lon="-80.220980">
+        <ele>328.7</ele>
+      </trkpt>
+      <trkpt lat="43.537127" lon="-80.219921">
+        <ele>332.4</ele>
+      </trkpt>
+      <trkpt lat="43.536772" lon="-80.219615">
+        <ele>330.7</ele>
+      </trkpt>
+      <trkpt lat="43.536509" lon="-80.219915">
+        <ele>325.0</ele>
+      </trkpt>
+      <trkpt lat="43.536247" lon="-80.219885">
+        <ele>320.7</ele>
+      </trkpt>
+      <trkpt lat="43.535860" lon="-80.220229">
+        <ele>317.0</ele>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>

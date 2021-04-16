@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+  <title>GPX App</title>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <meta name='description' content='GPX API'>
+  <meta name='keywords' content='GPX Webpage'>
+  <meta name='author' content='Michael Lam'>
+  <!-- Load jquery, bootstrap -->
+  <script src='https://code.jquery.com/jquery-3.3.1.min.js'
+    integrity='sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=' crossorigin='anonymous'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js'
+    integrity='sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q'
+    crossorigin='anonymous'></script>
+  <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css'
+    integrity='sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm' crossorigin='anonymous'>
+  <script src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js'
+    integrity='sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl'
+    crossorigin='anonymous'></script>
+  <!-- Custom CSS -->
+  <link rel='stylesheet' type='text/css' href='/style.css'>
+  <!-- Custom font -->
+  <!-- <link rel='preconnect' href='https://fonts.gstatic.com'> 
+    <link href='https://fonts.googleapis.com/css2?family=Montserrat&display=swap' rel='stylesheet'>  -->
+  <!-- <link rel='preconnect' href='https://fonts.gstatic.com'>
+  <link href='https://fonts.googleapis.com/css2?family=Cormorant&display=swap' rel='stylesheet'> -->
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <!-- Custom CSS End -->
+</head>
+
+<body>
+  <div class='typewriter d-flex align-items-left'>
+    <div>
+      <h1>
+        <b>GPX App</b>
+      </h1>
+    </div>
+  </div>
+
+  <div class='container'>
+    <h1></h1>
+  </div>
+
+  <hr>
+
+  <div class='container pt-4 pb-4'>
+
+    <!-- Header for file log -->
+    <div class='row pb-2'>
+      <div class='col-md-2'>
+        <h2 class='mb-2'>
+          <b>File Log</b>
+        </h2>
+      </div>
+      <div class='col-md-10'>
+        <form ref='uploadForm' id='uploadForm' action='/upload' method='post' encType='multipart/form-data'>
+          <div class='form-group float-right'>
+            <input type='submit' value='Upload File' class='btn btn-primary pt-2 pb-2'>
+            <input type='file' name='uploadFile' class='btn btn-primary'>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- File log -->
+    <div class='scroll-y scrollbar-y' id='fileLogSec'>
+      <table class='table table-bordered table-hover table-curved'>
+        <thead class='thead-light'>
+          <tr>
+            <th>File name (click to download)</th>
+            <th scope='col'>Version</th>
+            <th scope='col'>Creator</th>
+            <th scope='col'>Number of waypoints</th>
+            <th scope='col'>Number of routes</th>
+            <th scope='col'>Number of tracks</th>
+          </tr>
+        </thead>
+        <tbody id='fileLog'>
+          <!-- Table rows go here -->
+        </tbody>
+      </table>
+    </div>
+
+    <hr>
+
+    <div class='border rounded p-2' id='status'>
+      <h2 class='mb-1'>
+        <b>Status</b>
+        <small class='text-muted'>...</small>
+        <hr>
+      </h2>
+    </div>
+
+    <hr>
+
+    <div class='row pb-2'>
+      <div class='col-md-3'>
+        <h2>
+          <b>GPX view</b>
+        </h2>
+      </div>
+      <div class='row'>
+        <div class='col-md'>
+          <button type='button' class='btn btn-primary mr-3 pr-3' data-toggle='modal' data-target='#otherDataModal'>
+            Show Other Data
+          </button>
+          <div class='modal fade' id='otherDataModal' tabindex='-1' role='dialog' aria-labelledby='modalLabel'
+            aria-hidden='true'>
+            <div class='modal-dialog' role='document'>
+              <div class='modal-content'>
+                <div class='modal-header'>
+                  <h5 class='modal-title pt-3 pr-2' id='modalLabel'>Choose Component</h5>
+                  <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+                    <span aria-hidden='true'>&times;</span>
+                  </button>
+                </div>
+                <div class='modal-body'>
+                  <div class='container' id='otherDataBody'>
+                    <!-- Components go here -->
+                    <div class='row pt-2'>
+                      No components found...select a file!
+                    </div>
+                  </div>
+                </div>
+                <div class='modal-footer'>
+                  <button type='button' class='btn btn-danger' data-dismiss='modal'>Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class='col-md ml-3'>
+          <button type='button' class='btn btn-primary float-right' data-toggle='modal' id='renameModalBtn'
+            data-target='#renameModal'>
+            Rename
+          </button>
+          <div class='modal fade' id='renameModal' tabindex='-1' role='dialog' aria-labelledby='modalLabel'
+            aria-hidden='true'>
+            <div class='modal-dialog' role='document'>
+              <div class='modal-content'>
+                <div class='modal-header'>
+                  <h5 class='modal-title pt-3 pr-2' id='modalLabel'>Choose Component to Rename</h5>
+                  <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+                    <span aria-hidden='true'>&times;</span>
+                  </button>
+                </div>
+                <div class='modal-body'>
+                  <div class='container' id='renameBody'>
+                    <!-- Components go here -->
+                    <div class='row pt-2'>
+                      No components to rename...select a file!
+                    </div>
+                  </div>
+                  <form class='pt-3' ref='renameForm' id='renameForm'>
+                    <div class='input-group d-flex flex-row-reverse'>
+                      <input type='submit' class='btn btn-primary'>
+                      <input type='text' class='col-lg-9 mr-1' id='renameBox' placeholder='New component name'>
+                    </div>
+                    <div class='d-flex flex-row-reverse'>
+                      <small class='text-muted' id='renameSelectedText'>...</small>
+                    </div>
+                  </form>
+                </div>
+                <div class='modal-footer'>
+                  <button type='button' class='btn btn-danger' data-dismiss='modal'>Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class='col-md-5 ml-auto'>
+        <select class='form-control form-control-md' id='selectMenu'>
+          <option>Select File</option>
+          <!-- Files go here -->
+        </select>
+      </div>
+    </div>
+
+    <!-- GPX view panel -->
+    <div class='viewScroll-y viewScrollbar-y'>
+      <table class='table table-bordered table-hover table-curved'>
+        <thead class='thead-light'>
+          <tr>
+            <th scope='col'>Component</th>
+            <th scope='col'>Name</th>
+            <th scope='col'>Number of points</th>
+            <th scope='col'>Length</th>
+            <th scope='col'>Loop</th>
+          </tr>
+        </thead>
+        <tbody id='gpxView'>
+          <!-- Table rows go here -->
+        </tbody>
+      </table>
+      <div id='gpxSecView'> </div>
+    </div>
+
+    <hr>
+
+    <!-- GPX features/actions -->
+    <div class='row pt-2'>
+      <div>
+        <h2 class='mb-1'><b>GPX features</b></h2>
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- Create GPX -->
+    <div class='d-flex flex-row justify-content-between'>
+      <!-- <div class='col-md-6'> -->
+      <button type='button' class='btn btn-success btn-lg' data-toggle='modal' id='createGPX'
+        data-target='#createModal'>
+        Create GPX
+      </button>
+      <div class='modal fade' id='createModal' tabindex='-1' role='dialog' aria-labelledby='modalLabel'
+        aria-hidden='true'>
+        <div class='modal-dialog' role='document'>
+          <div class='modal-content'>
+            <div class='modal-header'>
+              <h5 class='modal-title pt-3 pr-2' id='modalLabel'>Create your own GPX</h5>
+              <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+                <span aria-hidden='true'>&times;</span>
+              </button>
+            </div>
+            <div class='modal-body'>
+              <div class='container' id='createBody'>
+              </div>
+              <form class='pt-3' ref='createForm' id='createForm'>
+                <div class='input-group'>
+                  <input type='text' class='col-lg-9 ml-3' id='fileIn' placeholder='Filename'>
+                  <div class='mb-1'>
+                    <small class='pl-3' id='renameSelectedText' style='color:red;'>* Do not include the file
+                      extension (.gpx, etc.)</small>
+                  </div>
+                  <input type='text' class='col-lg-9 ml-3 mb-2' id='creatorIn' placeholder='Creator'>
+                  <input type='text' class='col-lg-9 ml-3' id='versionIn' value='1.1' readonly>
+                  <input type='submit' class='btn btn-primary ml-2' id='createSubmit'>
+                  <div>
+                    <small class='pl-3' id='renameSelectedText' style='color:red;'>* All fields are
+                      required</small>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class='modal-footer'>
+              <button type='button' class='btn btn-danger' data-dismiss='modal'>Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Find paths between -->
+      <button type='button' class='btn btn-success btn-lg' id='findPathBtn' data-toggle='modal' id='findPaths'
+        data-target='#findModal'>
+        Find path
+      </button>
+      <div class='modal fade' id='findModal' tabindex='-1' role='dialog' aria-labelledby='modalLabel'
+        aria-hidden='true'>
+        <div class='modal-dialog' role='document'>
+          <div class='modal-content'>
+            <div class='modal-header'>
+              <h5 class='modal-title pt-3 pr-2' id='modalLabel'>Find path</h5>
+              <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+                <span aria-hidden='true'>&times;</span>
+              </button>
+            </div>
+            <div class='modal-body'>
+              <div class='container' id='findBody'>
+                <div class='dropdown' align='center'>
+                </div>
+                <div class='dropdown' id='compMenu' align='center'>
+                  <!-- Form to get start + endpoint + delta -->
+                  <form class='pt-3' ref='pathForm' id='pathForm'>
+                    <div align='center'>
+                      <p class='h6'>Start point</p>
+                    </div>
+                    <div class='pl-2 ml-3 mr-1 pt-2 row' align='center'>
+                      <input type='text' class='col-md-5 pathData' id='startLat' placeholder='Latitude'>
+                      <div class='pl-2'>
+                        <input type='text' class='col-md-9 pathData' id='startLon' placeholder='Longitude'>
+                      </div>
+                    </div>
+                    <div class='pt-3' align='center'>
+                      <p class='h6'>End point</p>
+                    </div>
+                    <div class='pl-2 ml-3 mr-1 pt-2 row' align='center'>
+                      <input type='text' class='col-md-5 pathData' id='endLat' placeholder='Latitude'>
+                      <div class='pl-2'>
+                        <input type='text' class='col-md-9 pathData' id='endLon' placeholder='Longitude'>
+                      </div>
+                    </div>
+                    <div class='pt-2' align='center'>
+                      <p class='h6'>Delta</p>
+                    </div>
+                    <div class='d-flex justify-content-center' align='center'>
+                      <input type='text' class='col-md-4 pathData' id='delta' placeholder='Delta'>
+                    </div>
+                    <div class='pt-3'>
+                      <input type='submit' class='btn btn-primary' id='pathSubmit'>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class='modal-footer'>
+              <button type='button' class='btn btn-danger' data-dismiss='modal'>Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add route -->
+      <button type='button' class='btn btn-success btn-lg mr-4' data-toggle='modal' id='addRouteBtn'
+        data-target='#addModal'>
+        Add route
+      </button>
+      <div class='modal fade' id='addModal' tabindex='-1' role='dialog' aria-labelledby='modalLabel' aria-hidden='true'>
+        <div class='modal-dialog' role='document'>
+          <div class='modal-content'>
+            <div class='modal-header'>
+              <h5 class='modal-title pt-3 pr-2' id='modalLabel'>Choose a file to add a route to!</h5>
+              <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+                <span aria-hidden='true'>&times;</span>
+              </button>
+            </div>
+            <div class='modal-body'>
+              <div class='container' id='addBody'>
+                <!-- File buttons go here -->
+              </div>
+              <form class='pt-3' ref='routeForm' id='routeForm'>
+                <div class='input-group d-flex flex-row-reverse' id='routeFormDiv'>
+                  <input type='submit' class='btn btn-primary'>
+                  <input type='text' class='col-lg-9 mr-1' id='routeBox' placeholder='Route name'>
+                </div>
+                <div id='wptDiv' align='center'>
+                  <!-- Waypoint inputs go here -->
+                </div>
+                <div class='mr-5' align='center'>
+                  <small class='text-muted' id='routeSelectedFile'>...</small>
+                </div>
+              </form>
+              <div class='mr-5' align='center'>
+                <button class='btn btn-success btn-sm' id='addWptBtn'>
+                  Add waypoint
+                </button>
+                <button class='btn btn-danger btn-sm' id='resetRouteBtn'>
+                  Reset
+                </button>
+              </div>
+            </div>
+            <div class='modal-footer'>
+              <button type='button' class='btn btn-danger' data-dismiss='modal'>Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+    <hr>
+
+    <div class='row pb-2'>
+      <div class='col-md-3'>
+        <h2>
+          <b>Paths Between</b>
+        </h2>
+      </div>
+    </div>
+
+    <!-- Paths between table -->
+    <div class='viewScroll-y viewScrollbar-y'>
+      <table class='table table-bordered table-hover table-curved'>
+        <thead class='thead-light'>
+          <tr>
+            <!-- <th scope='col'>Component</th> -->
+            <th scope='col'>Name</th>
+            <th scope='col'>Number of points</th>
+            <th scope='col'>Length</th>
+            <th scope='col'>Loop</th>
+          </tr>
+        </thead>
+        <tbody id='pathsBody'>
+          <!-- Paths go here -->
+        </tbody>
+      </table>
+      <div id='pathSec'>
+        <h2 style='text-align:center;padding-top:25px'>^</h2>
+        <h2 style='text-align:center;padding-top:5px'>Find some paths!</h2>
+      </div>
+    </div>
+
+    <!-- Bonus -->
+    <div class='row pt-2'>
+      <div>
+        <h2 class='mb-1'><b>Lengths</b></h2>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class='d-flex'>
+      <div class='pr-5 mr-5'>
+        <input type=' text' class='col-md-3 mr-2' id='routeLen' placeholder='Length'>
+        <button type='button' class='btn btn-primary btn-md' id='rteWLen'>
+          Number of Routes with length
+        </button>
+      </div>
+
+      <div class='pl-5 ml-5'>
+        <input type='text' class='col-md-3 mr-2' id='trackLen' placeholder='Length'>
+        <button type='button' class='btn btn-primary btn-md' id='trkWLen'>
+          Number of Tracks with length
+        </button>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <div>
+        <h2 class='mb-1'><b>Database Functions</b></h2>
+      </div>
+      <div>
+        <button type='button' class='btn btn-primary btn-lg' data-toggle='modal' id='login' data-target='#loginModal'>
+          Login
+        </button>
+        <button type='button' id='logout' class='btn btn-danger btn-lg' style='display:none'>
+          Logout
+        </button>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class='d-flex flex-row justify-content-between'>
+      <div class='modal fade' id='loginModal' tabindex='-1' role='dialog' aria-labelledby='modalLabel'
+        aria-hidden='true'>
+        <div class='modal-dialog' role='document'>
+          <div class='modal-content'>
+            <div class='modal-header'>
+              <h5 class='modal-title pt-3 pr-2' id='modalLabel'>Login</h5>
+              <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+                <span aria-hidden='true'>&times;</span>
+              </button>
+            </div>
+            <div class='modal-body'>
+              <div class='container' id='loginBody'>
+              </div>
+              <form class='pt-3' ref='loginForm' id='loginForm'>
+                <div class='input-group'>
+                  <input type='text' class='col-lg-9 ml-3 mb-2' id='userIn' placeholder='Username'>
+                  <input type='text' class='col-lg-9 ml-3 mb-2' id='databaseIn' placeholder='Database Name'>
+                  <input type='password' class='col-lg-9 ml-3' id='passwordIn' placeholder='Password'>
+                  <input type='submit' class='btn btn-primary ml-2' id='loginSubmit'>
+                  <div>
+                    <small class='pl-3' id='renameSelectedText' style='color:red;'>* All fields are
+                      required</small>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class='modal-footer'>
+              <button type='button' class='btn btn-danger' data-dismiss='modal'>Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class='d-flex flex-row justify-content-between'>
+      <button id='storeFileBtn' class='btn btn-dark btn-md' style='display:none;'>Store All Files</button>
+      <button id='clearDataBtn' class='btn btn-dark btn-md' style='display:none;'>Clear All Data</button>
+      <button id='displayDbBtn' class='btn btn-dark btn-md' style='display:none;'>Display DB Status</button>
+    </div>
+
+    <hr>
+
+    <div class="dropdown d-flex justify-content-between mt-4 mb-4">
+      <h2 id='queryDiv' class='mb-1' style='display:none;'><b>Execute Queries</b></h2>
+      <!-- <button id='queryDropdown' style='display:none;' class="btn btn-secondary dropdown-toggle" type="button"
+        id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Queries
+      </button>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+        <button id='displayRtes' class="dropdown-item">Display All Routes</button>
+        <button id='displayRteFile' class="dropdown-item">Display Route from
+          File</button>
+        <button id='displayPtsRte' class="dropdown-item">Display All Points of
+          Route</button>
+        <button id='displayPtsFile' class="dropdown-item">Display Points From File</button>
+        <button id='displayNroutes' class="dropdown-item">Display N Routes from File</button>
+      </div> -->
+
+    </div>
+
+    <div id='selectedFile' class="d-flex justify-content-between mt-4 mb-4">
+
+    </div>
+
+    <div class='d-flex flex-row justify-content-between'>
+      <button type='button' style='display:none;' class='btn btn-success btn-md' data-toggle='modal' id='allRtesBtn'
+        data-target='#allRtes'>
+        Display All Routes
+      </button>
+      <div class='modal fade' id='allRtes' tabindex='-1' role='dialog' aria-labelledby='modalLabel' aria-hidden='true'>
+        <div class='modal-dialog' role='document'>
+          <div class='modal-content'>
+            <div class='modal-header'>
+              <h5 class='modal-title pt-3 pr-2' id='modalLabel'>Display All Routes</h5>
+              <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+                <span aria-hidden='true'>&times;</span>
+              </button>
+            </div>
+            <div class='modal-body'>
+
+              <div class='container' id='allRtesBody'>
+                <div class="row pt-2" align='center'>
+                  <div class="col-sm">
+                    <button id='rteSortByLenBtn' class='btn btn-dark'>Sort by length</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class='container' id='allRtesBody'>
+                <div class="row pt-2" align='center'>
+                  <div class="col-sm">
+                    <button id='rteSortByNameBtn' class='btn btn-dark'>Sort by name</button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class='modal-footer'>
+              <button type='button' class='btn btn-danger' data-dismiss='modal'>Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button type='button' style='display:none;' class='btn btn-success btn-md' data-toggle='modal' id='allRtesFileBtn'
+        data-target='#allRtesFile'>
+        Display All Routes from File
+      </button>
+      <div class='modal fade' id='allRtesFile' tabindex='-1' role='dialog' aria-labelledby='modalLabel'
+        aria-hidden='true'>
+        <div class='modal-dialog' role='document'>
+          <div class='modal-content'>
+            <div class='modal-header'>
+              <h5 class='modal-title pt-3 pr-2' id='modalLabel'>Display All Routes</h5>
+              <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+                <span aria-hidden='true'>&times;</span>
+              </button>
+            </div>
+            <div class='modal-body'>
+              <div class="row pt-2 mb-3" align='center'>
+                <div class="col-sm">
+                  <button id='routeLenSortBtn' type='button' class='btn btn-success btn-sm'>Sort by Length</button>
+                </div>
+                <div class="col-sm">
+                  <button id='routeNameSortBtn' type='button' class='btn btn-success btn-sm'>Sort by Name</button>
+                </div>
+              </div>
+              <div id='displayRteSortDiv' class='d-flex justify-content-center'>
+              </div>
+              <div class='container' id='allRteFileBody'>
+                <!-- File buttons go here -->
+              </div>
+            </div>
+            <div class='modal-footer'>
+              <button type='button' class='btn btn-danger' data-dismiss='modal'>Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button type='button' style='display:none;' class='btn btn-success btn-md' data-toggle='modal' id='allPtsRteBtn'
+        data-target='#allPtsRte'>
+        Display All Points from Route
+      </button>
+      <div class='modal fade' id='allPtsRte' tabindex='-1' role='dialog' aria-labelledby='modalLabel'
+        aria-hidden='true'>
+        <div class='modal-dialog' role='document'>
+          <div class='modal-content'>
+            <div class='modal-header'>
+              <h5 class='modal-title pt-3 pr-2' id='modalLabel'>Display All Points from Route</h5>
+              <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+                <span aria-hidden='true'>&times;</span>
+              </button>
+            </div>
+            <div class='modal-body'>
+              <div class='container' id='pointBody'>
+                <!-- Route buttons go here -->
+              </div>
+            </div>
+            <div class='modal-footer'>
+              <button type='button' class='btn btn-danger' data-dismiss='modal'>Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <button type='button' style='display:none;' class='btn btn-success btn-md' data-toggle='modal' id='allPtsFileBtn'
+        data-target='#allPtsFile'>
+        Display All Points from File
+      </button>
+      <div class='modal fade' id='allPtsFile' tabindex='-1' role='dialog' aria-labelledby='modalLabel'
+        aria-hidden='true'>
+        <div class='modal-dialog' role='document'>
+          <div class='modal-content'>
+            <div class='modal-header'>
+              <h5 class='modal-title pt-3 pr-2' id='modalLabel'>Display All Points</h5>
+              <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+                <span aria-hidden='true'>&times;</span>
+              </button>
+            </div>
+            <div class='modal-body'>
+              <div class="row pt-2 mb-3" align='center'>
+                <div class="col-sm">
+                  <button id='ptLenSortBtn' type='button' class='btn btn-success btn-sm'>Sort by Route Length</button>
+                </div>
+                <div class="col-sm">
+                  <button id='ptNameSortBtn' type='button' class='btn btn-success btn-sm'>Sort by Route Name</button>
+                </div>
+              </div>
+              <div id='displayPtSortDiv' class='d-flex justify-content-center'>
+              </div>
+              <div class='container' id='allPtFileBody'>
+                <!-- File buttons go here -->
+              </div>
+            </div>
+            <div class='modal-footer'>
+              <button type='button' class='btn btn-danger' data-dismiss='modal'>Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Query table for routes -->
+    <div id='rteTableQuery' style='display:none;' class='viewScroll-y viewScrollbar-y mt-4'>
+      <table class='table table-bordered table-hover table-curved'>
+        <thead class='thead-light'>
+          <tr>
+            <th scope='col'>Route Name</th>
+            <th scope='col'>Route Length</th>
+          </tr>
+        </thead>
+        <tbody id='rteQueryBody'>
+          <!-- Routes go here -->
+        </tbody>
+      </table>
+      <div id='rteTable'></div>
+    </div>
+
+    <!-- Query table for points -->
+    <div id='ptTableQuery' style='display:none;' class='viewScroll-y viewScrollbar-y mt-4'>
+      <table class='table table-bordered table-hover table-curved'>
+        <thead class='thead-light'>
+          <tr>
+            <th scope='col'>Index</th>
+            <th scope='col'>Name</th>
+            <th scope='col'>Latitude</th>
+            <th scope='col'>Longitude</th>
+            <th scope='col'>Route Name</th>
+            <th scope='col'>Route Length</th>
+          </tr>
+        </thead>
+        <tbody id='ptQueryBody'>
+          <!-- Points go here -->
+        </tbody>
+      </table>
+      <div id='ptTable'></div>
+    </div>
+
+    <hr>
+  </div>
+
+  <!-- Leave me at the bottom of body -->
+  <script src='/index.js'></script>
+</body>
+
+</html>
