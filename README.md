@@ -9,7 +9,7 @@
 ## Features
 
 - Upload/download files to/from server
-- Display information stored in the firles (and about the files) in a user-friendly format
+- Display information stored in the files (and about the files) in a user-friendly format
 - Update files on the server
 - Create new files on the server
 - Save uploaded files in the MySQL database
@@ -28,7 +28,7 @@
 - **Ajax**
 - **Express**
 
-## Preview
+# Preview
 
 ![top](https://user-images.githubusercontent.com/27537005/115067416-df2a5380-9ebe-11eb-9635-a84f0cfd5e79.png)
 
